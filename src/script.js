@@ -104,3 +104,8 @@ function selectPage(document) {
 
 function placePDF(document, page, pdfFile) {
 }
+
+function placePDFPage(destinationPage, pdfFile, pdfPageNumber) {
+    app.pdfPlacePreferences.pageNumber = pdfPageNumber;
+    return destinationPage.place(pdfFile, [0, 0])[0];
+}
