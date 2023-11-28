@@ -103,6 +103,55 @@ function selectPage(document) {
 }
 
 function placePDF(document, page, pdfFile) {
+    app.pdfPlacePreferences.pdfCrop = PDFCrop.cropMedia;
+    document.viewPreferences.horizontalMeasurementUnits =
+        MeasurementUnits.MILLIMETERS;
+    document.viewPreferences.verticalMeasurementUnits =
+        MeasurementUnits.MILLIMETERS;
+
+    var pdfPageNumberCounter = 1;
+    var currentPage = page;
+
+    while (!pdfHasLooped(currentPage, pdfFile, pdfPageNumberCounter)) {
+        placeRightHalf(currentPage, pdfFile, pdfPageNumberCounter);
+
+        pdfPageNumberCounter++;
+
+        currentPage = appendPage(document, currentPage);
+        placeLeftHalf(currentPage, pdfFile, pdfPageNumberCounter);
+
+        pdfPageNumberCounter++;
+
+        currentPage = appendPage(document, currentPage);
+    }
+
+    pdfPageNumberCounter--;
+
+    while (pdfPageNumberCounter !== 0) {
+        placeRightHalf(currentPage, pdfFile, pdfPageNumberCounter);
+
+        pdfPageNumberCounter--;
+
+        currentPage = appendPage(document, currentPage);
+        placeLeftHalf(currentPage, pdfFile, pdfPageNumberCounter);
+
+        pdfPageNumberCounter--;
+
+        currentPage = appendPage(document, currentPage);
+    }
+
+    currentPage.remove();
+}
+
+function pdfHasLooped(destinationPage, pdfFile, pdfPageNumber) {
+    const placedPDF = placePDFPage(destinationPage, pdfFile, pdfPageNumber);
+    const hasLooped = placedPDF.pdfAttributes.pageNumber !== pdfPageNumber;
+    placedPDF.parent.remove();
+    return hasLooped;
+}
+
+function appendPage(document, page) {
+    return document.pages.add(LocationOptions.AFTER, page);
 }
 
 function placeLeftHalf(destinationPage, pdfFile, pdfPageNumber) {
