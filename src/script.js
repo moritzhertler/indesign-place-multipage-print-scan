@@ -105,6 +105,23 @@ function selectPage(document) {
 function placePDF(document, page, pdfFile) {
 }
 
+function placeLeftHalf(destinationPage, pdfFile, pdfPageNumber) {
+    const placedPDF = placePDFPage(destinationPage, pdfFile, pdfPageNumber);
+    const geometricBounds = placedPDF.parent.geometricBounds;
+    const width = geometricBounds[3] - geometricBounds[1];
+    geometricBounds[3] -= width / 2;
+    placedPDF.parent.geometricBounds = geometricBounds;
+}
+
+function placeRightHalf(destinationPage, pdfFile, pdfPageNumber) {
+    const placedPDF = placePDFPage(destinationPage, pdfFile, pdfPageNumber);
+    const geometricBounds = placedPDF.parent.geometricBounds;
+    const width = geometricBounds[3] - geometricBounds[1];
+    geometricBounds[1] += width / 2;
+    placedPDF.parent.geometricBounds = geometricBounds;
+    placedPDF.parent.move(undefined, [-width, 0]);
+}
+
 function placePDFPage(destinationPage, pdfFile, pdfPageNumber) {
     app.pdfPlacePreferences.pageNumber = pdfPageNumber;
     return destinationPage.place(pdfFile, [0, 0])[0];
